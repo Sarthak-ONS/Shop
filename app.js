@@ -12,6 +12,8 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const MONGODB_URI = process.env.MONGO_URI
+const PORT = process.env.APP_PORT
+console.log(PORT);
 
 console.log(MONGODB_URI);
 
@@ -73,8 +75,8 @@ mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(result => {
     console.log("CONNECTED TO DATABASE");
-    app.listen(3000, () => {
-      console.log("App is running on Port=3000");
+    app.listen(PORT, () => {
+      console.log(`App is running on Port=${PORT}`);
     });
   })
   .catch(err => {
