@@ -1,8 +1,9 @@
 const User = require('../models/user');
-const bcrypt = require('bcryptjs')
-const nodemailer = require('nodemailer')
-const sendGridTransport = require('nodemailer-sendgrid-transport')
-const crypto = require('crypto')
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+const { validationResult } = require('express-validator/check');
+const crypto = require('crypto');
 
 const transporter = nodemailer.createTransport(sendGridTransport({
   auth: {
@@ -80,6 +81,19 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
 
   const { email, password, confirmPassword } = req.body;
+
+  const errors = validationResult(req);
+
+  console.log(errors.array());
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: errors.array()[0].msg
+    });
+  }
+
 
   if (!email | !password) {
     req.flash('error', 'Invalid Credentials')

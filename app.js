@@ -13,10 +13,6 @@ const User = require('./models/user');
 
 const MONGODB_URI = process.env.MONGO_URI
 const PORT = process.env.APP_PORT
-console.log(PORT);
-
-console.log(MONGODB_URI);
-
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
