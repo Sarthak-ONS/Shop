@@ -5,19 +5,49 @@ const authController = require('../controllers/auth');
 
 const router = express.Router();
 
+const User = require('../models/user')
+
 router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    body('email')
+        .isEmail()
+        .withMessage('Please enter a valid email')
+        .custom((value, { req }) => {
+            return User.findOne({ email: value }).then(user => {
+                if (!user) {
+                    console.log('User yhi ni mila, route validator m');
+                    return Promise.reject('No account found.')
+                }
+                return true;
+            })
+        })
+    , body('password', 'Please enter atleast 5 chars and a alphanumeric password')
+        .isLength({ min: 5 })
+        .isAlphanumeric()
+    ,
+
+], authController.postLogin);
 
 router.post('/signup',
     [
         check('email')
             .isEmail()
-            .withMessage('Please enter a valid Email'),
+            .withMessage('Please enter a valid Email')
+            .custom((value, { req }) => {
+                return User.findOne({ email: value }).then(userDoc => {
+                    if (userDoc) {
+                        return Promise.reject('E-mail already exists, Please login or use another mail.')
+                    }
+                    return true;
+                })
+            })
+        ,
         body('password', 'Please enter atleast 5 chars and a alphanumeric password')
             .isLength({ min: 5 })
+            .isAlphanumeric()
         ,
         body('confirmPassword').custom((value, { req }) => {
             if (value !== req.body.password) {

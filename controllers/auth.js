@@ -40,21 +40,25 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: message
+    errorMessage: message,
+    oldInput: { email: "", password: "", confirmPassword: "" }
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: errors.array()[0].msg
+    });
+  }
   User.findOne({ email })
     .then(user => {
-      if (!user) {
-        req.flash('error', 'Invalid email or Password')
-        return res.redirect('/login')
-      }
       bcrypt.compare(password, user.password).then(
         doMatch => {
-
           if (doMatch) {
             req.session.isLoggedIn = true;
             req.session.user = user;
@@ -70,12 +74,13 @@ exports.postLogin = (req, res, next) => {
       )
         .catch(err => {
           console.log(err);
-
           res.redirect('/login')
-
         })
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+      res.redirect('/login');
+    });
 };
 
 exports.postSignup = (req, res, next) => {
@@ -90,7 +95,8 @@ exports.postSignup = (req, res, next) => {
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      oldInput: { email, password, confirmPassword }
     });
   }
 
@@ -100,34 +106,27 @@ exports.postSignup = (req, res, next) => {
     return res.redirect('/signup')
   }
 
-  User.findOne({ email }).then(userDoc => {
-    if (userDoc) {
-      console.log("User already exists");
-      req.flash('error', 'Email exists already, Please login or create an account with another mail.')
-      return res.redirect('/signup')
-    }
-    return bcrypt.hash(password, 12).then(hashedPassword => {
-      const user = new User({
-        email, password: hashedPassword, cart: {
-          items: []
-        }
-      })
-      return user.save();
+  return bcrypt.hash(password, 12).then(hashedPassword => {
+    const user = new User({
+      email, password: hashedPassword, cart: {
+        items: []
+      }
     })
-      .then(result => {
-        res.redirect('/login')
-        return transporter.sendMail({
-          to: email,
-          from: 'herculesproject7@gmail.com',
-          subject: 'Successfully registered in Shop',
-          html: '<h1>You signed up successfully.'
-        })
-      })
+    return user.save();
   })
+    .then(result => {
+      res.redirect('/login')
+      return transporter.sendMail({
+        to: email,
+        from: 'herculesproject7@gmail.com',
+        subject: 'Successfully registered in Shop',
+        html: '<h1>You signed up successfully.'
+      })
+    })
+
     .catch(err => {
       console.log(err);
     })
-
 
 };
 
