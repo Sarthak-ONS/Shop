@@ -19,7 +19,6 @@ router.get('/products', isAuth, adminController.getProducts);
 // /admin/add-product => POST
 router.post('/add-product', [
     body('title').isString().isLength({ min: 5 }).trim(),
-    body('imageUrl').isURL(),
     body('price').isFloat({ max: 99999 }),
     body('description').isLength({ min: 10, max: 150 }).trim()
 
@@ -29,7 +28,6 @@ router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 
 router.post('/edit-product', [
     body('title', 'Please enter a vallid title').isString().isLength({ min: 5 }).trim(),
-    body('imageUrl').isURL().withMessage('Please enter a valid image URL'),
     body('price').isFloat({ max: 99999 }).withMessage('Price should me max of $99999'),
     body('description').isLength({ min: 10, max: 150 }).withMessage('Description must be between 10 and 150 chars').trim()
 
