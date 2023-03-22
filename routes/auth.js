@@ -26,7 +26,7 @@ router.post('/login', [
         })
     , body('password', 'Please enter atleast 5 chars and a alphanumeric password')
         .isLength({ min: 5 })
-        .isAlphanumeric()
+        //.isAlphanumeric()
     ,
 
 ], authController.postLogin);
@@ -35,6 +35,7 @@ router.post('/signup',
     [
         check('email')
             .isEmail()
+            .normalizeEmail()
             .withMessage('Please enter a valid Email')
             .custom((value, { req }) => {
                 return User.findOne({ email: value }).then(userDoc => {
@@ -45,11 +46,11 @@ router.post('/signup',
                 })
             })
         ,
-        body('password', 'Please enter atleast 5 chars and a alphanumeric password')
+        body('password', 'Please enter atleast 5 chars and a alphanumeric password').trim()
             .isLength({ min: 5 })
-            .isAlphanumeric()
+        //.isAlphanumeric()
         ,
-        body('confirmPassword').custom((value, { req }) => {
+        body('confirmPassword').trim().custom((value, { req }) => {
             if (value !== req.body.password) {
                 throw new Error(
                     'Passwords do not match'
