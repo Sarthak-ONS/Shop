@@ -5,7 +5,6 @@ const Product = require('../models/product');
 
 
 exports.getAddProduct = (req, res, next) => {
-
   if (!req.session.isLoggedIn) {
     return res.redirect('/')
   }
@@ -50,11 +49,13 @@ exports.postAddProduct = (req, res, next) => {
     .save()
     .then(result => {
       // console.log(result);
-      console.log('Created Product');
+      console.log('CREATED PRODUCT');
       res.redirect('/admin/products');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -121,7 +122,11 @@ exports.postEditProduct = (req, res, next) => {
         });
     })
 
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -146,5 +151,9 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };

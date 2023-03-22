@@ -28,10 +28,10 @@ router.post('/add-product', [
 router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 
 router.post('/edit-product', [
-    body('title').isString().isLength({ min: 5 }).trim(),
-    body('imageUrl').isURL(),
-    body('price').isFloat({ max: 99999 }),
-    body('description').isLength({ min: 10, max: 150 }).trim()
+    body('title', 'Please enter a vallid title').isString().isLength({ min: 5 }).trim(),
+    body('imageUrl').isURL().withMessage('Please enter a valid image URL'),
+    body('price').isFloat({ max: 99999 }).withMessage('Price should me max of $99999'),
+    body('description').isLength({ min: 10, max: 150 }).withMessage('Description must be between 10 and 150 chars').trim()
 
 ], isAuth, adminController.postEditProduct);
 
