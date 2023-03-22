@@ -97,22 +97,23 @@ exports.postEditProduct = (req, res, next) => {
       editing: false,
       hasError: true,
       product: { title, imageUrl, description, price },
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      _id: productId
     });
   }
 
   Product.findById(productId)
     .then(product => {
-
       console.log(product.userId.toString());
+      console.log(req.user._id);
 
-      if (product.userId.toString() !== req.user._id) {
+      if (product.userId.toString() != req.user._id) {
         return res.redirect('/')
       }
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.description = updatedDesc;
-      product.imageUrl = updatedImageUrl;
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
       return product.save()
         .then(result => {
           console.log('UPDATED PRODUCT!');
