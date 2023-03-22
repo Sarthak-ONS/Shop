@@ -22,7 +22,9 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    errorMessage: message
+    errorMessage: message,
+    oldInputs: { email: '', password: '' },
+    validationErrors: []
   });
 };
 
@@ -41,7 +43,8 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: message,
-    oldInput: { email: "", password: "", confirmPassword: "" }
+    oldInput: { email: "", password: "", confirmPassword: "" },
+    validationErrors: []
   });
 };
 
@@ -52,7 +55,9 @@ exports.postLogin = (req, res, next) => {
     return res.status(422).render('auth/login', {
       path: '/login',
       pageTitle: 'Login',
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
+      oldInputs: { email, password }
     });
   }
   User.findOne({ email })
@@ -96,7 +101,8 @@ exports.postSignup = (req, res, next) => {
       path: '/signup',
       pageTitle: 'Signup',
       errorMessage: errors.array()[0].msg,
-      oldInput: { email, password, confirmPassword }
+      oldInput: { email, password, confirmPassword },
+      validationErrors: errors.array()
     });
   }
 
@@ -225,7 +231,6 @@ exports.getNewPassword = (req, res, next) => {
     })
 
 };
-
 
 exports.postNewPassword = (req, res, next) => {
   const { password, userId, passwordToken } = req.body;
