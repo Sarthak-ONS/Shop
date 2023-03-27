@@ -1,5 +1,7 @@
 const path = require('path');
 
+const { body } = require('express-validator/check');
+
 const express = require('express');
 
 const shopController = require('../controllers/shop');
@@ -9,7 +11,10 @@ const router = express.Router();
 
 router.get('/', shopController.getIndex);
 
-router.get('/search' , shopController.search)
+router.get('/search', body('title', 'Please enter atlease 4 characters.')
+    .isString()
+    .isLength({ min: 4 })
+    .trim(), shopController.search)
 
 router.get('/products', shopController.getProducts);
 

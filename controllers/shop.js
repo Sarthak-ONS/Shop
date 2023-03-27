@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const stripe = require('stripe')(process.env.STRIPE_API_KEY)
 
+const { validationResult } = require('express-validator/check');
+
 const PDFDocument = require('pdfkit');
 
 const Product = require('../models/product');
@@ -87,9 +89,14 @@ exports.getIndex = (req, res, next) => {
 
 exports.search = (req, res, next) => {
 
-  const page = +req.query.page || 1;
 
-  let totalItems;
+
+
+  const errors = validationResult(req);
+
+  console.log(req.query)
+
+
 
   Product.find({ 'title': { '$regex': req.query.q, '$options': 'i' } })
     .then(products => {
