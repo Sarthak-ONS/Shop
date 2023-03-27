@@ -74,12 +74,7 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: 'Shop',
         path: '/',
-        currentPage: page,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+        oldValue: '',
       });
     })
     .catch(err => {
@@ -88,6 +83,33 @@ exports.getIndex = (req, res, next) => {
       return next(error);
     });
 };
+
+
+exports.search = (req, res, next) => {
+
+  const page = +req.query.page || 1;
+
+  let totalItems;
+
+  Product.find({ 'title': { '$regex': req.query.q, '$options': 'i' } })
+    .then(products => {
+
+      console.log(products);
+
+      res.render('shop/index', {
+        prods: products,
+        pageTitle: 'Shop',
+        path: '/',
+        oldValue: req.query.q,
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+
+}
 
 exports.getCart = (req, res, next) => {
   req.user
