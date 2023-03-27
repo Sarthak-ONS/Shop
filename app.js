@@ -27,7 +27,7 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g,'-') + '-' + file.originalname);
+    cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
   }
 });
 
@@ -47,6 +47,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
+
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
@@ -111,7 +112,9 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(result => {
-    app.listen(process.env.APP_PORT);
+    app.listen(process.env.APP_PORT, () => { 
+      console.log(`App is running on PORT=${process.env.APP_PORT}`);
+    });
   })
   .catch(err => {
     console.log(err);
