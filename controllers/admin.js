@@ -210,3 +210,15 @@ exports.deleteProduct = (req, res, next) => {
       res.status(500).json({ message: 'Delete Product Failed.' })
     });
 };
+
+exports.getProfile = (req, res, next) => {
+
+  console.log(req.user);
+  res.render('admin/profile', {
+    pageTitle: 'Profile',
+    path: '/profile',
+    email: req.user.email,
+    name: req.user.name
+  })
+
+}

@@ -1,0 +1,21 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/main.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <center>
+                    <img height="150px" class="profile-img" src="https://images.pexels.com/photos/3760260/pexels-photo-3760260.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Profile Image" srcset="">
+                    <p>
+                    <h3>  <%= name%></h3>
+                    </p>
+                    <p>
+                        <%= email%>
+                    </p>
+                </center>
+            </main>
+            <%- include('../includes/end.ejs') %>
+
+                <script src="/js/admin.js"></script>
