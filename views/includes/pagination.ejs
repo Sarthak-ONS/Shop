@@ -11,12 +11,12 @@
                         <%= currentPage%>
                     </a>
                     <% if(hasNextPage) { %>
-                        <a href=?page=<%= nextPage%>">
+                        <a href=?page=<%= nextPage%>>
                             <%= nextPage%>
                         </a>
                         <%}%>
                             <% if (lastPage !==currentPage && nextPage !==lastPage) {%>
-                                <a href="?page=<%= lastPage%>">
+                                <a href="?page=<%= lastPage %>">
                                     <%= lastPage%>
                                 </a>
                                 <%}%>

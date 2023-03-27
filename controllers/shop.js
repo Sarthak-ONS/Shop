@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 const Product = require('../models/product');
 const Order = require('../models/order');
 
-const ITEMS_PER_PAGE = 2
+const ITEMS_PER_PAGE = 4
 
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
@@ -137,6 +137,33 @@ exports.postCartDeleteProduct = (req, res, next) => {
       return next(error);
     });
 };
+
+exports.getCheckout = (req, res, next) => {
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const products = user.cart.items;
+
+      let total = 0;
+
+      products.forEach(p => {
+        total += p.quantity * p.productId.price;
+      })
+
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: products,
+        totalSum: total
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
 
 exports.postOrder = (req, res, next) => {
   req.user
